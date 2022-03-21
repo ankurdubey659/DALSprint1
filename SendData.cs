@@ -19,18 +19,15 @@ namespace DALSprint1
 
 
 
-
-
-
         public static string SaveDrugDosage(DrugDosage objDrugDosage)
         {
 
-            {
                 string message = "Successfully Added";
                 try
                 {
-                    string query = "Insert into DrugDosage values(@DrugDosageId,@DosageDuration)";
+                    string query = "sp_SaveDrugDosage";//"Insert into DrugDosage values(@DrugDosageId,@DosageDuration)";
                     SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@DrugDosageId", objDrugDosage.DrugDosageId);
                     cmd.Parameters.AddWithValue("@DosageDuration", objDrugDosage.DosageDuration);
 
@@ -51,7 +48,7 @@ namespace DALSprint1
                     connection.Close();
                 }
                 return message;
-            }
+            
         }
         public static DrugDosage SendDosageById(string dosageId)
 
@@ -60,8 +57,9 @@ namespace DALSprint1
             try
             {
 
-                string query = "Select * from DrugDosage where DrugDosageId=@id";
+                string query = "sp_FetchDrugDosageById";//"Select * from DrugDosage where DrugDosageId=@id";
                 SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
+                sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
                 sdr.SelectCommand.Parameters.AddWithValue("@id", dosageId);
                 DataTable dt = new DataTable();
                 sdr.Fill(dt);
@@ -88,8 +86,10 @@ namespace DALSprint1
             List<Drug> sendDrugs = new List<Drug>();
             try
             {
-                string query = "Select * from Drug where DrugDosageInvoledId=@id";
+
+                string query = "sp_FetchAllDrugAndDoseByDosageId";//"Select * from Drug where DrugDosageInvoledId=@id";
                 SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
+                sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
                 sdr.SelectCommand.Parameters.AddWithValue("@id", drugDosageId);
                 DataTable dt = new DataTable();
                 sdr.Fill(dt);
@@ -135,8 +135,9 @@ namespace DALSprint1
             try
             {
 
-                    string query = "Insert into Address values(@AddCode,@AddLine1,@AddLine2,@LandMark,@City,@State,@PinCode,@Country)";
+                string query = "sp_saveAddress";//"Insert into Address values(@AddCode,@AddLine1,@AddLine2,@LandMark,@City,@State,@PinCode,@Country)";
                     SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@AddCode", newAddress.AddressCode);
                     cmd.Parameters.AddWithValue("@AddLine1", newAddress.AddressLine1);
                     cmd.Parameters.AddWithValue("@AddLine2", newAddress.AddressLine2);
@@ -166,8 +167,10 @@ namespace DALSprint1
         public static Address SendAddressByAddressCode(string addressCode)
         {
             Address sendAddress = new Address();
-            string query = "Select * from Address where AddressCode=@code";
+
+            string query = "sp_fetchAddressByAddressCode";//"Select * from Address where AddressCode=@code";
             SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
+            sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
             sdr.SelectCommand.Parameters.AddWithValue("@code", addressCode);
             DataTable dt = new DataTable();
             sdr.Fill(dt);
@@ -202,8 +205,9 @@ namespace DALSprint1
             string message = "Successfully Added";
             try
             {
-                string query = "Insert into Consultation values(@Id,@Date,@PhysicianId,@AppBookingId,@Diagnosis,@DosageId)";
+                string query = "sp_saveConsultation";// "Insert into Consultation values(@Id,@Date,@PhysicianId,@AppBookingId,@Diagnosis,@DosageId)";
                 SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Id", consultation.PrescriptionId);
                 cmd.Parameters.AddWithValue("@Date", consultation.PrescriptionDate.Date);
                 cmd.Parameters.AddWithValue("@PhysicianId", consultation.CPhysician);
@@ -234,8 +238,9 @@ namespace DALSprint1
             try
             {
 
-                string query = "Select * from Consultation where PrescriptionId=@id";
+                string query = "sp_fetchConsultationById";//"Select * from Consultation where PrescriptionId=@id";
                 SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
+                sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
                 sdr.SelectCommand.Parameters.AddWithValue("@id", prescriptionId);
                 DataTable dt = new DataTable();
                 sdr.Fill(dt);
@@ -270,14 +275,14 @@ namespace DALSprint1
     
 
 
-
         public static string AddNewDrug(Drug newDrug)
         {
             string message = "Successfully Added";
             try
             {
-                string query = "Insert into Drug values(@Id,@Name,@BrandName,@MRP,@MFGDate,@EXPDate,@Indications,@Composition,@BatchNo,@DrugDosageInvoledId,@DrugDose)";
+                string query = "sp_AddDrug";//"Insert into Drug values(@Id,@Name,@BrandName,@MRP,@MFGDate,@EXPDate,@Indications,@Composition,@BatchNo,@DrugDosageInvoledId,@DrugDose)";
                 SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Id", newDrug.DrugId);
                 cmd.Parameters.AddWithValue("@Name", newDrug.DrugName);
                 cmd.Parameters.AddWithValue("@BrandName", newDrug.BrandName);
@@ -309,7 +314,8 @@ namespace DALSprint1
         }
         public static string UpdateDrugPrice(string drugId, float newPrice)
         {
-            string query = "update Drug set MRP=@newMRP where Id=@id";
+
+            string query = "sp_UpdateDrugMRP";//"update Drug set MRP=@newMRP where Id=@id";
             string status = "Updated";
             Drug checkIfExist = SendDrugById(drugId);
             try
@@ -321,6 +327,7 @@ namespace DALSprint1
                 else
                 {
                     SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@newMRP", newPrice);
                     cmd.Parameters.AddWithValue("@id", drugId);
                     connection.Open();
@@ -345,8 +352,9 @@ namespace DALSprint1
             try
             {
 
-                string query = "Select * from Drug where Id=@id";
+                string query = "sp_FetchDrugById";// "Select * from Drug where Id=@id";
                 SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
+                sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
                 sdr.SelectCommand.Parameters.AddWithValue("@id", drugId);
                 DataTable dt = new DataTable();
                 sdr.Fill(dt);
@@ -433,10 +441,11 @@ namespace DALSprint1
         {
             string status = "Removed";
             try
-            {
-                string query = "Delete from Drug where Id=@id";
+            {  
+                string query = "sp_DeleteDrugById";//"Delete from Drug where Id=@id";
                 string id;
                 SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 List<Drug> drugsList = SendAllDrugs();
                 connection.Open();
                 foreach (Drug drug in drugsList)
@@ -461,7 +470,7 @@ namespace DALSprint1
         }
         public static string UpdateDosageDetailsInDrug(string drugId, string newDosage)
         {
-             string query = "update Drug set DrugDosageInvolvedId=@newupdate where Id=@id";
+            string query = "sp_UpdateDrugDosageDetails";//"update Drug set DrugDosageInvoledId=@newupdate where Id=@id";
             string status = "Updated";
             Drug checkIfExist = SendDrugById(drugId);
             try
@@ -473,6 +482,7 @@ namespace DALSprint1
                 else
                 {
                     SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@newupdate", newDosage);
                     cmd.Parameters.AddWithValue("@id", drugId);
                     connection.Open();
@@ -494,7 +504,7 @@ namespace DALSprint1
         public static string UpdateDrugDoseDetails(string drugId,string newDrugDose)
         {
 
-                string query = "update Drug set DrugDose=@newupdate where Id=@id";
+            string query = "sp_UpdateDrugDoseDetails";//"update Drug set DrugDose=@newupdate where Id=@id";
                 string status = "Updated";
                 Drug checkIfExist = SendDrugById(drugId);
                 try
@@ -506,6 +516,7 @@ namespace DALSprint1
                     else
                     {
                         SqlCommand cmd = new SqlCommand(query, connection);
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@newupdate", newDrugDose);
                         cmd.Parameters.AddWithValue("@id", drugId);
                         connection.Open();
@@ -528,15 +539,14 @@ namespace DALSprint1
 
 
 
-
-
         public static string AddNewPhysician(Physician newPhysician)
         {
             string message = "Successfully Added";
             try
-            {
-                string query = "Insert into Physician values(@Id,@FirstName,@MiddleName,@LastName,@Speciality,@Qualification,@PNum,@Email)";
+            {   
+                string query = "sp_AddPhysician";// "Insert into Physician values(@Id,@FirstName,@MiddleName,@LastName,@Speciality,@Qualification,@PNum,@Email)";
                 SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Id", newPhysician.PhysicianId);
                 cmd.Parameters.AddWithValue("@FirstName", newPhysician.PhysicianFirstName);
                 cmd.Parameters.AddWithValue("@MiddleName", newPhysician.PhysicianMiddleName);
@@ -573,9 +583,10 @@ namespace DALSprint1
                     throw new InvalidObjectException("Sorry! PhysicianId does not exist");
                 }
                 else
-                {
-                    string query = "Delete from Physician where Id=@id";
+                {  
+                    string query = "sp_DeletePhysician";//"Delete from Physician where Id=@id";
                     SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@id", physicianId);
                     connection.Open();
                     cmd.ExecuteNonQuery();
@@ -638,8 +649,9 @@ namespace DALSprint1
             try
             {
 
-                string query = "select * from Physician where Id=@id";
+                string query = "sp_FetchPhysicianById";//"select * from Physician where Id=@id";
                 SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@id", physicianId);
                 connection.Open();
                 SqlDataReader sdr = cmd.ExecuteReader();
@@ -723,6 +735,7 @@ namespace DALSprint1
                 else
                 {
                     SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@newUpdate", tempNewUpdate);
                     cmd.Parameters.AddWithValue("@id", physicianId);
                     connection.Open();
@@ -742,15 +755,15 @@ namespace DALSprint1
 
 
 
-
         public static string NewAppointment(Appointment newAppointment)
         {
             string status = "Appointment Fixed";
 
             try
             {
-                string query = "Insert into Appointment values(@BId,@BDate,@BTime,@ADate,@ATime,@APatient,@PDoctor,@Fee,@FeeStatus,@AStatus)";
+                string query = "sp_saveAppointment"; //"Insert into Appointment values(@BId,@BDate,@BTime,@ADate,@ATime,@APatient,@PDoctor,@Fee,@FeeStatus,@AStatus)";
                 SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@BId", newAppointment.BookingId);
                 cmd.Parameters.AddWithValue("@BDate", newAppointment.BookingDateAndTime.Date);
                 cmd.Parameters.AddWithValue("@BTime", newAppointment.BookingDateAndTime.TimeOfDay);
@@ -786,8 +799,9 @@ namespace DALSprint1
             try
             {
 
-                string query = "Select * from Appointment where BookingId=@bookingid";
+                string query = "sp_fetchAppointmentByBookingId";//"Select * from Appointment where BookingId=@bookingid";
                 SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
+                sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
                 sdr.SelectCommand.Parameters.AddWithValue("@bookingId", bookingId);
                 DataTable dt = new DataTable();
                 sdr.Fill(dt);
@@ -826,7 +840,7 @@ namespace DALSprint1
             List<Appointment> appointments = new List<Appointment>();
             try
             {
-                string query = "execute sp_fetchAllAppointment";
+                string query = "sp_fetchAppointmentByBookingId"; //"sp_fetchAllAppointment";
                 SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
                 sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
                 DataTable dt = new DataTable();
@@ -873,8 +887,9 @@ namespace DALSprint1
                 }
                 else
                 {
-                    string query = "update Appointment set AppointmentStatus=@cancelled where BookingId=@id";
+                    string query = "sp_updateAppointmentStatusToCancel";//"update Appointment set AppointmentStatus=@cancelled where BookingId=@id";
                     SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@cancelled", "Cancelled");
                     cmd.Parameters.AddWithValue("@id", bookingId);
                     connection.Open();
@@ -900,9 +915,10 @@ namespace DALSprint1
             string status ="Nothing To Update";
             try
             {
-                string query = "update Appointment set AppointmentStatus=@completed where BookingId=@id";
+                string query = "sp_updateAppointmentStatus";//"update Appointment set AppointmentStatus=@completed where BookingId=@id";
                 string id;
                 SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 List<Appointment> appointmentsList = SendAllAppointmentDetails();
                 connection.Open();
                 foreach (Appointment appointment in appointmentsList)
@@ -957,8 +973,9 @@ namespace DALSprint1
             string message = "Successfully Added";
             try
             {
-                string query = "Insert into Patient values(@Id,@FirstName,@MiddleName,@LastName,@Address,@DOB,@BMI,@IsDiabetic,@MedicalHistory,@PNum)";
+                string query = "sp_AddPatient";//"Insert into Patient values(@Id,@FirstName,@MiddleName,@LastName,@Address,@DOB,@BMI,@IsDiabetic,@MedicalHistory,@PNum)";
                 SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Id", newPatient.PatientId);
                 cmd.Parameters.AddWithValue("@FirstName", newPatient.PatientFirstName);
                 cmd.Parameters.AddWithValue("@MiddleName", newPatient.PatientMiddleName);
@@ -1000,8 +1017,9 @@ namespace DALSprint1
                 else
                 {
 
-                    string query = "Delete from Patient where Id=@id";
+                    string query = "sp_DeletePatient";// "Delete from Patient where Id=@id";
                     SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@id", patientId);
                     connection.Open();
                     cmd.ExecuteNonQuery();
@@ -1067,8 +1085,9 @@ namespace DALSprint1
             try
             {
 
-                string query = "Select * from Patient where Id=@id";
+                string query = "sp_FetchPatientById";//"Select * from Patient where Id=@id";
                 SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
+                sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
                 sdr.SelectCommand.Parameters.AddWithValue("@id", patientId);
                 DataTable dt = new DataTable();
                 sdr.Fill(dt);
@@ -1109,9 +1128,10 @@ namespace DALSprint1
 
             List<Patient> patients = new List<Patient>();
             try
-            {
-                string query = "Select * from Patient where PNum=@pNo";
+            {   
+                string query ="sp_FetchPatientByPhoneNumber";// "Select * from Patient where PNum=@pNo";
                 SqlDataAdapter sdr = new SqlDataAdapter(query, connection);
+                sdr.SelectCommand.CommandType = CommandType.StoredProcedure;
                 sdr.SelectCommand.Parameters.AddWithValue("@pNo", phoneNumber);
                 DataTable dt = new DataTable();
                 sdr.Fill(dt);

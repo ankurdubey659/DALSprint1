@@ -12,7 +12,7 @@ namespace DALSprint1
     {
         static string _connectionString = "Data Source=BTECH1830156;Initial Catalog=Sprint1Database;Integrated Security=true";
 
-        // private static string _connectionString = ConfigurationManager.ConnectionStrings["Sprint1connection"].ConnectionString;
+         //private static string _connectionString = ConfigurationManager.ConnectionStrings["Sprint1connection"].ConnectionString;
         private static SqlConnection connection = new SqlConnection(_connectionString);
         public static List<string> SendAdminDetails()
         {         
